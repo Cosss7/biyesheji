@@ -45,33 +45,31 @@ def generate_bids(op, tasks, n):
     #     bid.append(i)
     #     bids.append(bid)
 
-    q = dict()
-    for i in range(0, n):
-        q[i] = []
     for i in range(0, m):
-        num = random.randrange(2, n + 1)
+        num = random.randrange(2, n // m)
         s = random.sample(range(0, n), num)
+
         for j in s:
-            q[j].append(i)
-    for i in range(0, n):
-        bid = []
-        if op == 0:
-            # uniform
-            c = random.uniform(0, 50)
-        elif op == 1:
-            # normal
-            c = 0
-            while c <= 0 or c > 50:
-                c = random.normalvariate(25, 25 / 1.3)
-        elif op == 2:
-            # exponential
-            #c = random.expovariate(1)
-            c = random.uniform(0, 50)
-        bid.append(0)
-        bid.append(tuple(q[i]))
-        bid.append(c)
-        bid.append(i)
-        bids.append(bid)
+            bid = []
+            if op == 0:
+                # uniform
+                c = random.uniform(0, 50)
+            elif op == 1:
+                # normal
+                c = 0
+                while c <= 0 or c > 50:
+                    c = random.normalvariate(25, 25 / 1.3)
+            elif op == 2:
+                # exponential
+                # c = random.expovariate(1)
+                c = random.uniform(0, 50)
+            bid.append(0)
+            q = [i]
+            q = tuple(q)
+            bid.append(q)
+            bid.append(c)
+            bid.append(j)
+            bids.append(bid)
 
     return bids
 
@@ -102,6 +100,8 @@ def WDBP(tasks, bids, r, n):
             q = set(bid[1])
             c = bid[2]
             bid[0] = c / len(q.difference(qc))
+        if len(bids) == 0:
+            break;
         bids = sorted(bids)
         s.append(bids[0])
         bid = bids[0]
@@ -134,6 +134,11 @@ def TMDP(bidxy, bids, n, m):
             q = set(bid[1])
             c = bid[2]
             bid[0] = c / len(q.difference(qc))
+        if len(bids) == 0:
+            bid = bidxy
+            cb = bid
+            p = bid[0] * len(qxy.difference(qc))
+            return cb, p
         bids = sorted(bids)
         bid = bids[0]
         q = bid[1]
@@ -180,6 +185,7 @@ def range_n(op):
             res = WDBP(tasks, bids_tmp, r, n)
             s = res[0]
             w = res[1]
+            print(w)
             p_all = 0
             for bid in s:
                 bid_tmp = bid
@@ -193,7 +199,7 @@ def range_n(op):
                 # print(p)
                 p_all = p_all + p
             overpayment = (p_all - w) / w
-            # print(overpayment)
+            print(overpayment)
             y_sum += overpayment
             z_sum += w
         x.append(n)
@@ -202,16 +208,20 @@ def range_n(op):
     return x, y, z
 
 fig, ax = plt.subplots()
+plt.ylabel('Overpayment ratio $\lambda$')
+plt.xlabel('Number of smartphones $n$')
 x, y, z = range_n(0)
-ax.plot(x, y, "-^", mfc='none', label='UNM')
+plt.plot(x, y, "-^", mfc='none', label='UNM')
 
 x, y, z = range_n(1)
-ax.plot(x, y, "-o", mfc='none', label='NORM')
+plt.plot(x, y, "-o", mfc='none', label='NORM')
 
 x, y, z = range_n(2)
-ax.plot(x, y, "-s", mfc='none', label='EXP')
+plt.plot(x, y, "-s", mfc='none', label='EXP')
 
-ax.legend(loc='best')
+plt.legend(loc='best')
+plt.savefig('Overpayment ratio vs. Number of smartphones.png')
 plt.show()
+
 
 
