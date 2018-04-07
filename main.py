@@ -1,6 +1,10 @@
 import csv
 import time
 import random
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib as mpl
+import matplotlib.lines as mlines
 
 
 
@@ -19,13 +23,38 @@ def generate_bids(op, tasks, users):
     n = len(users)
     m = len(tasks)
     bids = []
+    # for i in range(0, n):
+    #     bid = []
+    #     q = []
+    #     c = 0
+    #     for j in range(0, m):
+    #         if task_in_user(tasks[j], users[i]):
+    #             q.append(j)
+    #     if op == 0:
+    #         # uniform
+    #         c = random.uniform(0, 50)
+    #     elif op == 1:
+    #         # exponential
+    #         c = random.expovariate()
+    #     elif op == 2:
+    #         # normal
+    #         c = random.normalvariate()
+    #     bid.append(0)
+    #     bid.append(tuple(q))
+    #     bid.append(c)
+    #     bid.append(i)
+    #     bids.append(bid)
+
+    q = dict()
+    for i in range(0, n):
+        q[i] = []
+    for i in range(0, m):
+        num = random.randrange(2, n + 1)
+        s = random.sample(range(0, n), num)
+        for j in s:
+            q[j].append(i)
     for i in range(0, n):
         bid = []
-        q = []
-        c = 0
-        for j in range(0, m):
-            if task_in_user(tasks[j], users[i]):
-                q.append(j)
         if op == 0:
             # uniform
             c = random.uniform(0, 50)
@@ -36,10 +65,11 @@ def generate_bids(op, tasks, users):
             # normal
             c = random.normalvariate()
         bid.append(0)
-        bid.append(tuple(q))
+        bid.append(tuple(q[i]))
         bid.append(c)
         bid.append(i)
         bids.append(bid)
+
     return bids
 
 
@@ -64,7 +94,7 @@ def WDBP(tasks, bids, r, n):
     qc = set()
     while len(qc) < m:
         bids = [bid for bid in bids
-                if len(set(bids[1]).difference(qc)) > 0]
+                if len(set(bid[1]).difference(qc)) > 0]
         for bid in bids:
             q = set(bid[1])
             c = bid[2]
@@ -94,8 +124,9 @@ def TMDP(bidxy, bids, n, m):
     qxy = set(bidxy[1])
     qc = set()
     while len(qc) != m:
+
         bids = [bid for bid in bids
-                if len(set(bids[1]).difference(qc)) > 0]
+                if len(set(bid[1]).difference(qc)) > 0]
         for bid in bids:
             q = set(bid[1])
             c = bid[2]
@@ -118,7 +149,7 @@ def TMDP(bidxy, bids, n, m):
 
 
 n = 10
-m = 5
+m = 40
 r = 3
 
 users = []
@@ -129,20 +160,41 @@ for i in range(1, n + 1):
 
 #print(users[0])
 
-tasks = generate_tasks(m)
+x = []
+y = []
+for n in range(400, 1100, 100):
+    y_sum = 0
+    for i in range(0, 20):
+        tasks = generate_tasks(m)
+        bids = generate_bids(0, tasks, users)
+        res = WDBP(tasks, bids, r, n)
+        s = res[0]
+        w = res[1]
+        print(s)
+        print(w)
+        p_all = 0
+        for bid in s:
+            # bid[0] = 0
+            bids.remove(bid)
+            ans = TMDP(bid, bids, n, m)
+            bids.append(bid)
+            cd = ans[0]
+            p = ans[1]
+            # print(p)
+            p_all = p_all + p
+        overpayment = (p_all - w) / w
+        print(overpayment)
+        y_sum += overpayment
+    x.append(n)
+    y.append(y_sum / 20)
+plt.figure(1)
+blue_line = mlines.Line2D([], [], mfc='none',
+                          marker='^', label='UNM')
+plt.legend(handles=[blue_line])
+plt.plot(x, y, "-^", mfc='none')
+#plt.axis([300, 1100, 0, 2])
+plt.show()
 
-for i in range(0, 1):
-    bids = generate_bids(0, tasks, users)
-    res = WDBP(tasks, bids, r, n)
-    s = res[0]
-    w = res[1]
-    print(s)
-    print(w)
-    for bid in s:
-        bid[0] = 0
-        ans = TMDP(bid, set(tasks).difference(bid), n, m)
-        cd = ans[0]
-        p = ans[1]
 
 
 
