@@ -168,13 +168,13 @@ r = 3
 
 #print(users[0])
 
-def range_n(op):
-    # range n
+def range_m(op):
+    # range m
 
     x = []
     y = []
     z = []
-    for n in range(400, 1100, 100):
+    for m in range(10, 60, 10):
         y_sum = 0
         z_sum = 0
         loop = 20
@@ -202,7 +202,7 @@ def range_n(op):
             print(overpayment)
             y_sum += overpayment
             z_sum += w
-        x.append(n)
+        x.append(m)
         y.append(y_sum / loop)
         z.append(z_sum / loop)
     return x, y, z
@@ -212,31 +212,31 @@ def range_n(op):
 plt.figure(1)
 zz = []
 plt.ylabel('Overpayment ratio $\lambda$')
-plt.xlabel('Number of smartphones $n$')
-x, y, z = range_n(0)
+plt.xlabel('Number of sensing tasks $m$')
+x, y, z = range_m(0)
 zz.append(z)
 plt.plot(x, y, "-^", mfc='none', label='UNM')
 
-x, y, z = range_n(1)
+x, y, z = range_m(1)
 zz.append(z)
 plt.plot(x, y, "-o", mfc='none', label='NORM')
 
-x, y, z = range_n(2)
+x, y, z = range_m(2)
 zz.append(z)
 plt.plot(x, y, "-s", mfc='none', label='EXP')
 
 plt.legend(loc='best')
-plt.savefig('Overpayment ratio vs. Number of smartphones.png')
+plt.savefig('Overpayment ratio vs. Number of sensing tasks.png')
 plt.show()
 
 plt.figure(2)
 plt.ylabel('Social cost $\omega$')
-plt.xlabel('Number of smartphones $n$')
+plt.xlabel('Number of sensing tasks $m$')
 plt.plot(x, zz[0], "-^", mfc='none', label='UNM')
 plt.plot(x, zz[1], "-o", mfc='none', label='NORM')
 plt.plot(x, zz[2], "-s", mfc='none', label='EXP')
 plt.legend(loc='best')
-plt.savefig('Social cost vs. Number of smartphones.png')
+plt.savefig('Social cost vs. Number of Number of sensing tasks.png')
 plt.show()
 
 

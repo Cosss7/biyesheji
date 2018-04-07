@@ -57,7 +57,7 @@ def generate_bids(op, tasks, n):
             elif op == 1:
                 # normal
                 c = 0
-                while c <= 0:
+                while c <= 0 or c > 50:
                     c = random.normalvariate(25, 25 / 1.3)
             elif op == 2:
                 # exponential
@@ -168,76 +168,68 @@ r = 3
 
 #print(users[0])
 
-def range_n(op):
-    # range n
+def range_m(op, n, m):
 
     x = []
     y = []
     z = []
-    for n in range(400, 1100, 100):
-        y_sum = 0
-        z_sum = 0
-        loop = 20
-        for i in range(0, loop):
-            tasks = generate_tasks(m)
-            bids = generate_bids(op, tasks, n)
+    p_list = []
+    for i in range(0, n):
+        p_list.append(0)
+
+    y_sum = 0
+    z_sum = 0
+    loop = 1
+    for i in range(0, loop):
+        tasks = generate_tasks(m)
+        bids = generate_bids(op, tasks, n)
+        bids_tmp = bids
+        res = WDBP(tasks, bids_tmp, r, n)
+        s = res[0]
+        w = res[1]
+        print(w)
+        p_all = 0
+        for bid in s:
+            bid_tmp = bid
+            bid_tmp[0] = 0
+            bids.remove(bid_tmp)
             bids_tmp = bids
-            res = WDBP(tasks, bids_tmp, r, n)
-            s = res[0]
-            w = res[1]
-            print(w)
-            p_all = 0
-            for bid in s:
-                bid_tmp = bid
-                bid_tmp[0] = 0
-                bids.remove(bid_tmp)
-                bids_tmp = bids
-                ans = TMDP(bid_tmp, bids_tmp, n, m)
-                bids.append(bid_tmp)
-                cd = ans[0]
-                p = ans[1]
-                # print(p)
-                p_all = p_all + p
-            overpayment = (p_all - w) / w
-            print(overpayment)
-            y_sum += overpayment
-            z_sum += w
-        x.append(n)
-        y.append(y_sum / loop)
-        z.append(z_sum / loop)
-    return x, y, z
+            ans = TMDP(bid_tmp, bids_tmp, n, m)
+            bids.append(bid_tmp)
+            cd = ans[0]
+            p = ans[1]
+            # print(p)
+            p_all = p_all + p
+            p_list[bid[3]] += p
+        overpayment = (p_all - w) / w
+        print(overpayment)
+        y_sum += overpayment
+        z_sum += w
+    x.append(m)
+    y.append(y_sum / loop)
+    z.append(z_sum / loop)
+    p_list = sorted(p_list)
+    return p_list
 
 
 # fig, ax = plt.subplots()
 plt.figure(1)
-zz = []
-plt.ylabel('Overpayment ratio $\lambda$')
-plt.xlabel('Number of smartphones $n$')
-x, y, z = range_n(0)
-zz.append(z)
-plt.plot(x, y, "-^", mfc='none', label='UNM')
+plt.ylabel('Empirical CDF')
+plt.xlabel('Payoffs')
+n = 1000
+m = 40
+x = []
+y = []
+p_list = range_m(0, n, m)
+for i in range(0, n):
+    x.append(p_list[i])
+    y.append((i + 1) / n)
 
-x, y, z = range_n(1)
-zz.append(z)
-plt.plot(x, y, "-o", mfc='none', label='NORM')
-
-x, y, z = range_n(2)
-zz.append(z)
-plt.plot(x, y, "-s", mfc='none', label='EXP')
-
+plt.plot(x, y, label='n=1000, m=40')
 plt.legend(loc='best')
-plt.savefig('Overpayment ratio vs. Number of smartphones.png')
+plt.savefig('Empirical CDF vs. Payoffs.png')
 plt.show()
 
-plt.figure(2)
-plt.ylabel('Social cost $\omega$')
-plt.xlabel('Number of smartphones $n$')
-plt.plot(x, zz[0], "-^", mfc='none', label='UNM')
-plt.plot(x, zz[1], "-o", mfc='none', label='NORM')
-plt.plot(x, zz[2], "-s", mfc='none', label='EXP')
-plt.legend(loc='best')
-plt.savefig('Social cost vs. Number of smartphones.png')
-plt.show()
 
 
 
