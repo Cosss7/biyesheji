@@ -60,10 +60,13 @@ def generate_bids(op, tasks, n):
             c = random.uniform(0, 50)
         elif op == 1:
             # normal
-            c = random.normalvariate(25, 25 / 1.3)
+            c = 0
+            while c <= 0 or c > 50:
+                c = random.normalvariate(25, 25 / 1.3)
         elif op == 2:
             # exponential
-            c = random.expovariate()
+            #c = random.expovariate(1)
+            c = random.uniform(0, 50)
         bid.append(0)
         bid.append(tuple(q[i]))
         bid.append(c)
@@ -160,25 +163,31 @@ r = 3
 
 #print(users[0])
 
-def range_n():
+def range_n(op):
     # range n
-    fig, ax = plt.subplots()
+
     x = []
     y = []
+    z = []
     for n in range(400, 1100, 100):
         y_sum = 0
-        for i in range(0, 20):
+        z_sum = 0
+        loop = 1
+        for i in range(0, loop):
             tasks = generate_tasks(m)
-            bids = generate_bids(0, tasks, n)
-            res = WDBP(tasks, bids, r, n)
+            bids = generate_bids(op, tasks, n)
+            bids_tmp = bids
+            res = WDBP(tasks, bids_tmp, r, n)
             s = res[0]
             w = res[1]
             p_all = 0
             for bid in s:
-                # bid[0] = 0
-                bids.remove(bid)
-                ans = TMDP(bid, bids, n, m)
-                bids.append(bid)
+                bid_tmp = bid
+                bid_tmp[0] = 0
+                bids.remove(bid_tmp)
+                bids_tmp = bids
+                ans = TMDP(bid_tmp, bids_tmp, n, m)
+                bids.append(bid_tmp)
                 cd = ans[0]
                 p = ans[1]
                 # print(p)
@@ -186,68 +195,23 @@ def range_n():
             overpayment = (p_all - w) / w
             # print(overpayment)
             y_sum += overpayment
+            z_sum += w
         x.append(n)
-        y.append(y_sum / 20)
-    ax.plot(x, y, "-^", mfc='none', label='UNM')
+        y.append(y_sum / loop)
+        z.append(z_sum / loop)
+    return x, y, z
 
-    x = []
-    y = []
-    for n in range(400, 1100, 100):
-        y_sum = 0
-        for i in range(0, 20):
-            tasks = generate_tasks(m)
-            bids = generate_bids(0, tasks, n)
-            res = WDBP(tasks, bids, r, n)
-            s = res[0]
-            w = res[1]
-            p_all = 0
-            for bid in s:
-                # bid[0] = 0
-                bids.remove(bid)
-                ans = TMDP(bid, bids, n, m)
-                bids.append(bid)
-                cd = ans[0]
-                p = ans[1]
-                # print(p)
-                p_all = p_all + p
-            overpayment = (p_all - w) / w
-            # print(overpayment)
-            y_sum += overpayment
-        x.append(n)
-        y.append(y_sum / 20)
-    ax.plot(x, y, "-o", mfc='none', label='NORM')
+fig, ax = plt.subplots()
+x, y, z = range_n(0)
+ax.plot(x, y, "-^", mfc='none', label='UNM')
 
-    x = []
-    y = []
-    for n in range(400, 1100, 100):
-        y_sum = 0
-        for i in range(0, 20):
-            tasks = generate_tasks(m)
-            bids = generate_bids(2, tasks, n)
-            res = WDBP(tasks, bids, r, n)
-            s = res[0]
-            w = res[1]
-            p_all = 0
-            for bid in s:
-                # bid[0] = 0
-                bids.remove(bid)
-                ans = TMDP(bid, bids, n, m)
-                bids.append(bid)
-                cd = ans[0]
-                p = ans[1]
-                # print(p)
-                p_all = p_all + p
-            overpayment = (p_all - w) / w
-            # print(overpayment)
-            y_sum += overpayment
-        x.append(n)
-        y.append(y_sum / 20)
-    ax.plot(x, y, "-s", mfc='none', label='EXP')
+x, y, z = range_n(1)
+ax.plot(x, y, "-o", mfc='none', label='NORM')
 
-    legend = ax.legend(loc='best')
-    plt.show()
+x, y, z = range_n(2)
+ax.plot(x, y, "-s", mfc='none', label='EXP')
 
-range_n()
-
+ax.legend(loc='best')
+plt.show()
 
 
