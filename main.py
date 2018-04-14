@@ -46,7 +46,7 @@ def generate_bids(op, tasks, n):
     #     bids.append(bid)
 
     for i in range(0, m):
-        num = random.randrange(2, n // m)
+        num = random.randrange(2, n + 1)
         s = random.sample(range(0, n), num)
 
         for j in s:
@@ -156,88 +156,89 @@ def TMDP(bidxy, bids, n, m):
                     if bid[3] == id]
 
 
-n = 500
-m = 40
-r = 3
+if __name__ == '__main__':
+    n = 500
+    m = 40
+    r = 3
 
-# users = []
-# for i in range(1, n + 1):
-#     with open('taxi_log_2008_by_id/' + str(i) + '.txt', 'r') as f:
-#         reader = csv.reader(f)
-#         users.append(list(reader))
+    # users = []
+    # for i in range(1, n + 1):
+    #     with open('taxi_log_2008_by_id/' + str(i) + '.txt', 'r') as f:
+    #         reader = csv.reader(f)
+    #         users.append(list(reader))
 
-#print(users[0])
+    #print(users[0])
 
-def range_n(op):
-    # range n
+    def range_n(op):
+        # range n
 
-    x = []
-    y = []
-    z = []
-    for n in range(400, 1100, 100):
-        y_sum = 0
-        z_sum = 0
-        loop = 20
-        for i in range(0, loop):
-            tasks = generate_tasks(m)
-            bids = generate_bids(op, tasks, n)
-            bids_tmp = bids
-            res = WDBP(tasks, bids_tmp, r, n)
-            s = res[0]
-            w = res[1]
-            print(w)
-            p_all = 0
-            for bid in s:
-                bid_tmp = bid
-                bid_tmp[0] = 0
-                bids.remove(bid_tmp)
+        x = []
+        y = []
+        z = []
+        for n in range(400, 1100, 100):
+            y_sum = 0
+            z_sum = 0
+            loop = 20
+            for i in range(0, loop):
+                tasks = generate_tasks(m)
+                bids = generate_bids(op, tasks, n)
                 bids_tmp = bids
-                ans = TMDP(bid_tmp, bids_tmp, n, m)
-                bids.append(bid_tmp)
-                cd = ans[0]
-                p = ans[1]
-                # print(p)
-                p_all = p_all + p
-            overpayment = (p_all - w) / w
-            print(overpayment)
-            y_sum += overpayment
-            z_sum += w
-        x.append(n)
-        y.append(y_sum / loop)
-        z.append(z_sum / loop)
-    return x, y, z
+                res = WDBP(tasks, bids_tmp, r, n)
+                s = res[0]
+                w = res[1]
+                print(w)
+                p_all = 0
+                for bid in s:
+                    bid_tmp = bid
+                    bid_tmp[0] = 0
+                    bids.remove(bid_tmp)
+                    bids_tmp = bids
+                    ans = TMDP(bid_tmp, bids_tmp, n, m)
+                    bids.append(bid_tmp)
+                    cd = ans[0]
+                    p = ans[1]
+                    # print(p)
+                    p_all = p_all + p
+                overpayment = (p_all - w) / w
+                print(overpayment)
+                y_sum += overpayment
+                z_sum += w
+            x.append(n)
+            y.append(y_sum / loop)
+            z.append(z_sum / loop)
+        return x, y, z
 
 
-# fig, ax = plt.subplots()
-plt.figure(1)
-zz = []
-plt.ylabel('Overpayment ratio $\lambda$')
-plt.xlabel('Number of smartphones $n$')
-x, y, z = range_n(0)
-zz.append(z)
-plt.plot(x, y, "-^", mfc='none', label='UNM')
+    # fig, ax = plt.subplots()
+    plt.figure(1)
+    zz = []
+    plt.ylabel('Overpayment ratio $\lambda$')
+    plt.xlabel('Number of smartphones $n$')
+    x, y, z = range_n(0)
+    zz.append(z)
+    plt.plot(x, y, "-^", mfc='none', label='UNM')
 
-x, y, z = range_n(1)
-zz.append(z)
-plt.plot(x, y, "-o", mfc='none', label='NORM')
+    x, y, z = range_n(1)
+    zz.append(z)
+    plt.plot(x, y, "-o", mfc='none', label='NORM')
 
-x, y, z = range_n(2)
-zz.append(z)
-plt.plot(x, y, "-s", mfc='none', label='EXP')
+    x, y, z = range_n(2)
+    zz.append(z)
+    plt.plot(x, y, "-s", mfc='none', label='EXP')
 
-plt.legend(loc='best')
-plt.savefig('Overpayment ratio vs. Number of smartphones.png')
-plt.show()
+    plt.legend(loc='best')
+    plt.savefig('Overpayment ratio vs. Number of smartphones.png')
+    plt.show()
 
-plt.figure(2)
-plt.ylabel('Social cost $\omega$')
-plt.xlabel('Number of smartphones $n$')
-plt.plot(x, zz[0], "-^", mfc='none', label='UNM')
-plt.plot(x, zz[1], "-o", mfc='none', label='NORM')
-plt.plot(x, zz[2], "-s", mfc='none', label='EXP')
-plt.legend(loc='best')
-plt.savefig('Social cost vs. Number of smartphones.png')
-plt.show()
+    plt.figure(2)
+    plt.ylabel('Social cost $\omega$')
+    plt.xlabel('Number of smartphones $n$')
+    plt.plot(x, zz[0], "-^", mfc='none', label='UNM')
+    plt.plot(x, zz[1], "-o", mfc='none', label='NORM')
+    plt.plot(x, zz[2], "-s", mfc='none', label='EXP')
+    plt.legend(loc='best')
+    plt.savefig('Social cost vs. Number of smartphones.png')
+    plt.show()
 
 
 
