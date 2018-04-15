@@ -15,7 +15,7 @@ def range_n(op):
         # print('in n = ' + str(n))
         y_sum = 0
         z_sum = 0
-        loop = 1
+        loop = 20
         for i in range(0, loop):
             # print('in loop ' + str(i))
             tasks = generator.generate_tasks(m)

@@ -2,7 +2,6 @@ import logging
 import generator
 import algorithm
 import matplotlib.pyplot as plt
-logging.basicConfig(filename='log.log', level=logging.INFO)
 
 
 def range_m(op):
@@ -27,7 +26,7 @@ def range_m(op):
                 bid_tmp[0] = 0
                 bids.remove(bid_tmp)
                 bids_tmp = bids
-                ans = algorithm.TMDP(bid_tmp, bids_tmp, n, m)
+                ans = algorithm.TMDP(bid_tmp, bids_tmp, n, m, r)
                 bids.append(bid_tmp)
                 cd = ans[0]
                 p = ans[1]

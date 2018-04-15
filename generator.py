@@ -55,7 +55,7 @@ def generate_bids(op, tasks, n):
         task2user.append([])
     # iterate tasks, a task assign to at least two users.
     for i in range(0, m):
-        num = random.randrange(2, 8)
+        num = random.randrange(2, 10)
         s = random.sample(range(0, n), num)
         # add the task to selected users.
         for j in s:
@@ -65,13 +65,13 @@ def generate_bids(op, tasks, n):
         # a bid
         sub_tasks = task2user[i]
         # add each sub-tasks as a bid, guarantee every sub-tasks can be take.
-        # for j in sub_tasks:
-        #     bid = []
-        #     bid.append(0)
-        #     bid.append(tuple(j))
-        #     bid.append(generate_cost(op))
-        #     bid.append(i)
-        #     bids.append(bid)
+        for j in sub_tasks:
+            bid = []
+            bid.append(0)
+            bid.append(tuple(j))
+            bid.append(generate_cost(op))
+            bid.append(i)
+            bids.append(bid)
         # random the number of bids the user submitted.
         k = random.randrange(0, len(sub_tasks) + 1)
         for itk in range(0, k):
