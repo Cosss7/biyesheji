@@ -178,7 +178,7 @@ if __name__ == '__main__':
         for n in range(400, 1100, 100):
             y_sum = 0
             z_sum = 0
-            loop = 20
+            loop = 1
             for i in range(0, loop):
                 tasks = generate_tasks(m)
                 bids = generate_bids(op, tasks, n)

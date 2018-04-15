@@ -1,7 +1,10 @@
+import logging
+import time
+logging.basicConfig(filename='log.log', level=logging.INFO)
 
 
 def WDBP(tasks, bids, r, n):
-    print('in WDBP')
+    # logging.info('in WDBP')
     m = len(tasks)
     # cnt count each user has accommodated bids.
     cnt = dict()
@@ -38,12 +41,12 @@ def WDBP(tasks, bids, r, n):
         if cnt[id] >= r:
             bids = [bid for bid in bids
                     if bid[3] == id]
-    print('out WDBP')
+    # logging.info('out WDBP')
     return s, w
 
 
 def TMDP(bidxy, bids, n, m, r):
-    print('in TMDP')
+    # print('in TMDP')
     # cnt count each user has accommodated bids.
     cnt = dict()
     for i in range(0, n):
@@ -58,8 +61,8 @@ def TMDP(bidxy, bids, n, m, r):
         if len(bids) == 0:
             bid = bidxy
             cb = bid
-            p = bid[0] * len(qxy.difference(qc))
-            print('out TMDP')
+            p = max(bidxy[2], bid[0] * len(qxy.difference(qc)))
+            # logging.info('out TMDP')
             return cb, p
         # compute r(beta_i^k) for each bid.
         for bid in bids:
@@ -73,7 +76,7 @@ def TMDP(bidxy, bids, n, m, r):
         if len(qxy.difference(qc.union(q))) == 0:
             cb = bid
             p = bid[0] * len(qxy.difference(qc))
-            print('out TMDP')
+            # logging.info('out TMDP')
             return cb, p
         qc = qc.union(q)
         del bids[0]
@@ -82,6 +85,24 @@ def TMDP(bidxy, bids, n, m, r):
             bids = [bid for bid in bids
                     if bid[3] == id]
     # if cant find critical bid, return self
-    print('out TMDP')
+    # logging.info('out TMDP')
     return bidxy, bidxy[2]
+
+
+dfs_s = []
+dfs_w = 100000000000000
+
+
+def dfs(tasks, bids, r, cur_bids, cur_idx):
+    m = len(tasks)
+    n = len(bids)
+    q = set()
+    for bid in cur_bids:
+        q = q.union(bid[1])
+    # if len(q) == m:
+    #     return
+    for i in range(cur_idx, n):
+        cur_bids.append(bids[i])
+        dfs(tasks, bids, r, cur_bids, i + 1)
+        cur_bids.remove(bids[i])
 
