@@ -1,9 +1,14 @@
 import logging
-import generator
-import algorithm
-import matplotlib.pyplot as plt
 import time
+
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.font_manager import FontProperties
+
+import algorithm
+import generator
+
 logging.basicConfig(filename='log.log', level=logging.INFO)
 
 
@@ -74,6 +79,11 @@ if __name__ == '__main__':
     means_frank = (90, 55, 40, 65)
     means_guido = (85, 62, 54, 20)
 
+    myfont = FontProperties(
+        fname='/usr/share/fonts/truetype/wqy/wqy-microhei.ttc')
+    # 解决负号'-'显示为方块的问题
+    matplotlib.rcParams['axes.unicode_minus'] = False
+
     # create plot
     fig, ax = plt.subplots()
     ax.set_yscale('log')
@@ -84,21 +94,20 @@ if __name__ == '__main__':
     rects1 = plt.bar(index, y1, bar_width,
                      alpha=opacity,
                      color='b',
-                     label='TRAC')
+                     label=u'实验')
 
     rects2 = plt.bar(index + bar_width, y2, bar_width,
                      alpha=opacity,
                      color='g',
-                     label='OPT')
+                     label=u'对照')
 
-    plt.xlabel('Different settings with n, m')
-    plt.ylabel('Running time (ms)')
+    plt.xlabel(u'对于 n, m 不同的设置', fontproperties=myfont)
+    plt.ylabel(u'运行时间 (毫秒)', fontproperties=myfont)
     # plt.title('Scores by person')
-    plt.xticks(index + bar_width / 2, ('{100,8}', '{100,9}', '{110,8}', '{110,9}', '120,8', '120,9'))
-    plt.legend()
+    plt.xticks(index + bar_width / 2,
+               ('{100,8}', '{100,9}', '{110,8}', '{110,9}', '120,8', '120,9'))
+    plt.legend(prop=myfont)
 
     plt.tight_layout()
     plt.savefig('Evaluation of computation efficiency.png')
     plt.show()
-
-

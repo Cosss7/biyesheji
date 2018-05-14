@@ -4,6 +4,8 @@ import algorithm
 import matplotlib.pyplot as plt
 import time
 import numpy as np
+import matplotlib
+from matplotlib.font_manager import FontProperties
 logging.basicConfig(filename='log.log', level=logging.INFO)
 
 
@@ -16,7 +18,7 @@ def range_mu(op):
         # print('in n = ' + str(n))
         y_sum = 0
         z_sum = 0
-        loop = 20
+        loop = 50
         for i in range(0, loop):
             # print('in loop ' + str(i))
             tasks = generator.generate_tasks(m)
@@ -54,9 +56,12 @@ if __name__ == '__main__':
     m = 40
     r = 3
 
+    myfont = FontProperties(
+        fname='/usr/share/fonts/truetype/wqy/wqy-microhei.ttc')
+    # 解决负号'-'显示为方块的问题
+    matplotlib.rcParams['axes.unicode_minus'] = False
+
     plt.figure(1)
-    plt.ylabel('Overpayment ratio $\lambda$')
-    plt.xlabel('Number of smartphones $n$')
     x, y0, z0 = range_mu(0)
     x, y1, z1 = range_mu(1)
     x, y2, z2 = range_mu(2)
@@ -68,21 +73,21 @@ if __name__ == '__main__':
 
     rects1 = plt.bar(index, y0, bar_width,
                      alpha=opacity,
-                     label='UNM')
+                     label=u'均匀分布')
 
     rects2 = plt.bar(index + bar_width, y1, bar_width,
                      alpha=opacity,
-                     label='NORM')
+                     label=u'正态分布')
 
     rects3 = plt.bar(index + 2 * bar_width, y2, bar_width,
                      alpha=opacity,
-                     label='EXP')
+                     label=u'指数分布')
 
-    plt.xlabel('Average of real cost')
-    plt.ylabel('Overpayment ratio $\lambda$')
+    plt.xlabel(u'真实成本的平均数', fontproperties=myfont)
+    plt.ylabel(u'超额偿付率 $\lambda$', fontproperties=myfont)
     # plt.title('Scores by person')
     plt.xticks(index + bar_width, ('15', '20', '25'))
-    plt.legend()
+    plt.legend(prop=myfont)
 
     plt.tight_layout()
     plt.savefig('Overpayment ratio vs. Cost range R.png')
@@ -92,21 +97,21 @@ if __name__ == '__main__':
     plt.figure(2)
     plt.bar(index, z0, bar_width,
                      alpha=opacity,
-                     label='UNM')
+                     label=u'均匀分布')
 
     plt.bar(index + bar_width, z1, bar_width,
                      alpha=opacity,
-                     label='NORM')
+                     label=u'正态分布')
 
     plt.bar(index + 2 * bar_width, z2, bar_width,
                      alpha=opacity,
-                     label='EXP')
+                     label=u'指数分布')
 
-    plt.xlabel('Average of real cost')
-    plt.ylabel('Social cost $\omega$')
+    plt.xlabel(u'真实成本的平均数', fontproperties=myfont)
+    plt.ylabel(u'社会成本 $\omega$', fontproperties=myfont)
     # plt.title('Scores by person')
     plt.xticks(index + bar_width, ('15', '20', '25'))
-    plt.legend()
+    plt.legend(prop=myfont)
 
     plt.tight_layout()
     plt.savefig('Social cost vs. Cost range R.png')
