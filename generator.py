@@ -93,12 +93,12 @@ def generate_bids_mu(op, tasks, n, mu):
     m = len(tasks)
     bids = []
     task2user = []
-    n //= 10
+    # n //= 10
     for i in range(0, n):
         task2user.append([])
     # iterate tasks, a task assign to at least two users.
     for i in range(0, m):
-        num = random.randrange(2, 10)
+        num = random.randrange(2, max(10, n // m))
         s = random.sample(range(0, n), num)
         # add the task to selected users.
         for j in s:
@@ -118,7 +118,7 @@ def generate_bids_mu(op, tasks, n, mu):
             bid.append(i)
             bids.append(bid)
         # random the number of bids the user submitted.
-        k = random.randrange(1, len(sub_tasks) + 2)
+        k = random.randrange(1, len(sub_tasks) + 1)
         for itk in range(0, k):
             bid = []
             q_tmp = random.sample(sub_tasks, random.randrange(1, len(sub_tasks) + 1))

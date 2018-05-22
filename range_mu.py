@@ -18,7 +18,7 @@ def range_mu(op):
         # print('in n = ' + str(n))
         y_sum = 0
         z_sum = 0
-        loop = 50
+        loop = 20
         for i in range(0, loop):
             # print('in loop ' + str(i))
             tasks = generator.generate_tasks(m)

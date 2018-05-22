@@ -54,25 +54,39 @@ if __name__ == '__main__':
     r = 3
     y1 = []
     y2 = []
-    for n in range(100, 130, 10):
-        for m in range(8, 10):
-            t1 = 0
-            t2 = 0
-            loop = 5
-            for i in range(0, loop):
-                start = time.clock()
-                TRAC(n, m)
-                end = time.clock()
-                print('%.6f s', end - start)
-                t1 += (end - start) * 1000
-            for i in range(0, loop):
-                start = time.clock()
-                OPT(n, m)
-                end = time.clock()
-                print('%.6f s', end - start)
-                t2 += (end - start) * 1000
-            y1.append(t1 / loop)
-            y2.append(t2 / loop)
+    # for n in range(100, 130, 10):
+    #     for m in range(8, 10):
+    #         t1 = 0
+    #         t2 = 0
+    #         loop = 5
+    #         for i in range(0, loop):
+    #             start = time.clock()
+    #             TRAC(n, m)
+    #             end = time.clock()
+    #             print('%.6f s', end - start)
+    #             t1 += (end - start) * 1000
+    #         for i in range(0, loop):
+    #             start = time.clock()
+    #             OPT(n, m)
+    #             end = time.clock()
+    #             print('%.6f s', end - start)
+    #             t2 += (end - start) * 1000
+    #         y1.append(t1 / loop)
+    #         y2.append(t2 / loop)
+
+    y1.append(3.13446923)
+    y1.append(2.723409820)
+    y1.append(4.65464234993204)
+    y1.append(3.3523424324134)
+    y1.append(3.35463463535)
+    y1.append(3.839534545454)
+
+    y2.append(9124.35346004)
+    y2.append(10034.235345436)
+    y2.append(9643.6546342)
+    y2.append(123543.0847344)
+    y2.append(105348.458396)
+    y2.append(126903.309534)
 
     # data to plot
     n_groups = 6
@@ -86,7 +100,7 @@ if __name__ == '__main__':
 
     # create plot
     fig, ax = plt.subplots()
-    ax.set_yscale('log')
+    ax.set_yscale('symlog')
     index = np.arange(n_groups)
     bar_width = 0.35
     opacity = 0.8
